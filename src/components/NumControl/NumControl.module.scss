@@ -1,0 +1,17 @@
+.num-control {
+  display: flex;
+  gap: 8px;
+  label {
+    user-select: none;
+    width: 70px;
+    flex-shrink: 0;
+    abbr {
+      cursor: help;
+    }
+  }
+  span {
+    width: 70px;
+    user-select: none;
+    flex-shrink: 0;
+  }
+}
