@@ -72,6 +72,10 @@
   position: absolute;
   translate: -5px -15px;
   border-radius: 100px;
+  transition: all 0.3s;
+  &:hover {
+    scale: 1.1;
+  }
   &:active {
     cursor: grabbing;
   }
