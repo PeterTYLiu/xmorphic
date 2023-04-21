@@ -48,7 +48,7 @@ function App() {
   const [size, setSize] = useState(175);
   const [color, setColor] = useState(defaultColor);
   const [backgroundColor, setBackgroundColor] = useState(defaultColor);
-  const [angle, setAngle] = useState(225);
+  const [angle, setAngle] = useState(237);
   const [elevation, setElevation] = useState(20);
   const [intensity, setIntensity] = useState(50);
   const [blurriness, setBlurriness] = useState(3);
