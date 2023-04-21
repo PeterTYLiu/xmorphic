@@ -4,6 +4,7 @@ import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon } from "@radix-ui/react-icons";
 
 const defaultColor = "#59a680";
+const defaultBackgroundColor = "#9b6edd";
 const colorInputTitleModulator = 0.8;
 type Mode = "skeuo" | "neu" | "glass" | "x";
 
@@ -30,10 +31,10 @@ function hexIsLight(hex: string) {
   return num > 256 ** 3 / 2;
 }
 
-function numToHex(num: number) {
-  const str = (num * 255).toString(16);
-  return str.length === 1 ? `0${str}` : str.substring(0, 2);
-}
+// function numToHex(num: number) {
+//   const str = (num * 255).toString(16);
+//   return str.length === 1 ? `0${str}` : str.substring(0, 2);
+// }
 
 function Var({ v }: { v: string }) {
   return <span className={styles.variable}>{v}</span>;
@@ -47,14 +48,15 @@ function App() {
   const [radius, setRadius] = useState(8);
   const [size, setSize] = useState(175);
   const [color, setColor] = useState(defaultColor);
-  const [backgroundColor, setBackgroundColor] = useState(defaultColor);
+  const [backgroundColor, setBackgroundColor] = useState(defaultBackgroundColor);
   const [angle, setAngle] = useState(237);
+  const [logoAngle, setLogoAngle] = useState(237);
   const [elevation, setElevation] = useState(20);
   const [intensity, setIntensity] = useState(50);
   const [blurriness, setBlurriness] = useState(3);
   const [bevel, setBevel] = useState(1.5);
-  const [opacity, setOpacity] = useState(0.5);
-  const [isLinked, setIsLinked] = useState(true);
+  const [opacity, setOpacity] = useState(50);
+  const [isLinked, setIsLinked] = useState(false);
   const [mode, setMode] = useState<Mode>("neu");
   const bulbRef = useRef<HTMLDivElement | null>(null);
 
@@ -72,11 +74,11 @@ function App() {
       setAngle(Math.round(angle + 180));
     };
 
-    const pointerupHandler: EventListener = (event) => {
+    const pointerupHandler: EventListener = () => {
       window.document.removeEventListener("pointermove", pointermoveHandler);
     };
 
-    const pointerdownHandler: EventListener = (event) => {
+    const pointerdownHandler: EventListener = () => {
       window.document.addEventListener("pointermove", pointermoveHandler);
       window.document.addEventListener("pointerup", pointerupHandler);
     };
@@ -88,26 +90,65 @@ function App() {
     };
   }, [bulbRef]);
 
+  // Set the logo angle
+  useEffect(() => {
+    if (!bulbRef.current) return;
+
+    const { left: lLeft, top: lTop, bottom: lBottom, right: lRight } = document.getElementById("logo")!.getBoundingClientRect();
+    const [logoX, logoY] = [lLeft + (lRight - lLeft) / 2, lTop + (lBottom - lTop) / 2];
+
+    const { left: bLeft, top: bTop, bottom: bBottom, right: bRight } = bulbRef.current.getBoundingClientRect();
+    const [bulbX, bulbY] = [bLeft + (bRight - bLeft) / 2, bTop + (bBottom - bTop) / 2];
+
+    const lAngle = (Math.atan2(bulbY - logoY, bulbX - logoX) * 180) / Math.PI;
+    setLogoAngle(Math.round(lAngle));
+  }, [angle, bulbRef]);
+
   // =============================================================
   // ==================== Intermediary Values ====================
   // =============================================================
 
   const backgroundGradientAngle = (angle + 90) % 360;
+  const logoBackgroundGradientAngle = (logoAngle + 90) % 360;
 
   // =============================================================
   // ========================== The Page =========================
   // =============================================================
 
   return (
-    <div className={styles.App} style={{ backgroundColor }}>
+    <div
+      className={styles.app}
+      style={
+        {
+          backgroundColor,
+          "--blurriness": `${blurriness}px`,
+          "--color": color,
+          "--bevel": bevel + "px",
+          "--opacity": `${opacity}%`,
+          "--elevation": elevation,
+          "--intensity": intensity,
+        } as CSSProperties
+      }
+    >
       <header className={styles.header}>
-        <select onChange={(e) => setMode(e.target.value as Mode)}>
-          <option value="neu">neu</option>
-          <option value="glass">glass</option>
-          <option value="skeuo">skeuo</option>
-          <option value="x">𝑥</option>
-        </select>
-        morphic
+        <div
+          className={`${styles.logo} ${styles[mode]}`}
+          id="logo"
+          style={
+            {
+              color: hexIsLight(color) ? adjustHexColor(color, -colorInputTitleModulator) : adjustHexColor(color, colorInputTitleModulator),
+              "--angle": `${logoBackgroundGradientAngle}deg`,
+            } as CSSProperties
+          }
+        >
+          <select onChange={(e) => setMode(e.target.value as Mode)}>
+            <option value="neu">neu</option>
+            <option value="glass">glass</option>
+            <option value="skeuo">skeuo</option>
+            <option value="x">𝑥</option>
+          </select>
+          <span>morphic</span>
+        </div>
       </header>
       <main className={styles.main}>
         <div className={styles.controls}>
@@ -181,8 +222,8 @@ function App() {
 
           {mode === "glass" && (
             <>
-              <NumControl name="Opacity" value={opacity} setValue={setOpacity} min={0} max={1} step={0.01} />
-              <NumControl name="Blur" value={blurriness} setValue={setBlurriness} min={0} max={10} step={0.1} />
+              <NumControl name="Opacity" value={opacity} setValue={setOpacity} min={0} max={100} suffix="%" />
+              <NumControl name="Blurriness" value={blurriness} setValue={setBlurriness} min={0} max={10} step={0.1} />
             </>
           )}
         </div>
@@ -213,15 +254,9 @@ function App() {
             id="target"
             style={
               {
-                "--blur": `${blurriness}px`,
-                "--radius": radius + "%",
-                "--color": color,
-                "--bevel": bevel + "px",
-                "--glass-bg": color + numToHex(opacity),
                 "--angle": `${backgroundGradientAngle}deg`,
-                "--elevation": elevation,
-                "--intensity": intensity,
                 "--size": size + "px",
+                "--radius": radius + "%",
               } as CSSProperties
             }
           />
@@ -254,6 +289,14 @@ function App() {
           <br />
           <Var v="--bevel" />: {bevel}px;
           <br />
+          {mode === "glass" && (
+            <>
+              <Var v="--opacity" />: {opacity}%;
+              <br />
+              <Var v="--blurriness" />: {blurriness}px;
+              <br />
+            </>
+          )}
           <br />
           <span className={styles.comment}>/*=========== Computed Variables ===========*/</span>
           <br />
@@ -295,32 +338,36 @@ function App() {
           <br />
           <Prop p="border-radius" />: <Var v="--radius" />;
           <br />
-          <Prop p="background" />: linear-gradient(
-          <br />
-          <span className={styles.indented2}>
-            var(
-            <Var v="--angle" />
-            ),
-          </span>
-          <br />
-          <span className={styles.indented2}>
-            rgba(0, 0, 0, calc(var(
-            <Var v="--intensity" />) * 0.002)),
-          </span>
-          <br />
-          <span className={styles.indented2}>
-            rgba(255, 255, 255, calc(var(
-            <Var v="--intensity" />) * 0.002))
-          </span>
-          <br />
-          <span className={styles.indented}>),</span>
-          <br />
-          <span className={styles.indented}>
-            var(
-            <Var v="--primary-color" />
-            );
-          </span>
-          <br />
+          {mode !== "glass" && (
+            <>
+              <Prop p="background" />: linear-gradient(
+              <br />
+              <span className={styles.indented2}>
+                var(
+                <Var v="--angle" />
+                ),
+              </span>
+              <br />
+              <span className={styles.indented2}>
+                rgba(0, 0, 0, calc(var(
+                <Var v="--intensity" />) * 0.002)),
+              </span>
+              <br />
+              <span className={styles.indented2}>
+                rgba(255, 255, 255, calc(var(
+                <Var v="--intensity" />) * 0.002))
+              </span>
+              <br />
+              <span className={styles.indented}>),</span>
+              <br />
+              <span className={styles.indented}>
+                var(
+                <Var v="--primary-color" />
+                );
+              </span>
+              <br />
+            </>
+          )}
           <Prop p="box-shadow" />: calc(var(
           <Var v="--x-displacement" />) * -1) calc(var(
           <Var v="--y-displacement" />) * -1) calc(var(
@@ -365,6 +412,21 @@ function App() {
             ));
           </span>
           <br />
+          {mode === "glass" && (
+            <>
+              <Prop p="backdrop-filter" />: blur(var(
+              <Var v="--blurriness" />
+              ));
+              <br />
+              <Prop p="background-color" />: color-mix(in srgb, var(
+              <Var v="--color" />) var(
+              <Var v="--opacity" />
+              ), transparent calc(100% - var(
+              <Var v="--opacity" />
+              )));
+              <br />
+            </>
+          )}
           <br />
           <span className={styles.comment}>/*============ Static Properties ============*/</span>
           <br />
