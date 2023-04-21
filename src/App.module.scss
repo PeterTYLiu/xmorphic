@@ -1,14 +1,77 @@
 .App {
   padding: 100px;
-  transition: background-color 0.3s;
-  display: flex;
+  height: 100vh;
+  height: 100dvh;
 }
 
 .target {
-  border-width: 1px;
-  border-style: solid;
-  display: grid;
-  place-items: center;
+  --edge-opacity: calc(var(--intensity) * 0.003);
+  --sin: calc(sin(var(--angle)));
+  --sin-90: calc(sin(var(--angle) + 90deg));
+  --sin-180: calc(sin(var(--angle) + 180deg));
+  --sin-270: calc(sin(var(--angle) + 270deg));
+  --x-displacement: calc(var(--size) * var(--sin-180) * 0.01 * var(--elevation));
+  --y-displacement: calc(var(--size) * var(--sin-90) * 0.01 * var(--elevation));
+  --sheen-offset: max(calc(var(--bevel) / 2), 3px);
+
+  aspect-ratio: 1;
+  z-index: 5;
+  position: relative;
+  background-blend-mode: soft-light;
+
+  width: var(--size);
+  border-radius: var(--radius);
+
+  box-shadow: calc(var(--x-displacement) * -1) calc(var(--y-displacement) * -1) calc(var(--size) * 2.5)
+      rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
+    var(--x-displacement) var(--y-displacement) calc(var(--size) * 0.02 * var(--elevation)) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
+    inset calc(var(--bevel) * -1) 0 var(--bevel) hsla(100, 0%, calc((var(--sin) + 1) * 50%), var(--edge-opacity)),
+    inset 0 var(--bevel) var(--bevel) hsla(100, 0%, calc((var(--sin-90) + 1) * 50%), var(--edge-opacity)),
+    inset var(--bevel) 0 var(--bevel) hsla(100, 0%, calc((var(--sin-180) + 1) * 50%), var(--edge-opacity)),
+    inset 0 calc(var(--bevel) * -1) var(--bevel) hsla(100, 0%, calc((var(--sin-270) + 1) * 50%), var(--edge-opacity));
+
+  &.glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: var(--bevel);
+      top: var(--bevel);
+      left: var(--bevel);
+      right: var(--bevel);
+      border-radius: var(--radius);
+      background: linear-gradient(var(--angle), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, calc(var(--intensity) / 350)));
+    }
+  }
+  &.skeuo,
+  &.neu {
+    background: linear-gradient(
+        var(--angle),
+        rgba(0, 0, 0, calc(var(--intensity) * 0.002)),
+        rgba(255, 255, 255, calc(var(--intensity) * 0.002))
+      ),
+      var(--color);
+  }
+
+  &.skeuo {
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: var(--sheen-offset);
+      top: var(--sheen-offset);
+      right: var(--sheen-offset);
+      left: var(--sheen-offset);
+      border-radius: var(--radius);
+      background: linear-gradient(
+        var(--angle),
+        hsla(0, 0%, 0%, calc(var(--intensity) / 550)),
+        hsla(0, 0%, 100%, 0) 40%,
+        hsla(0, 0%, 100%, 0) 60%,
+        hsla(0, 0%, 100%, calc(var(--intensity) / 150))
+      );
+    }
+  }
 }
 
 .inner {
@@ -67,14 +130,18 @@
   cursor: grab;
   width: 30px;
   height: 30px;
-  background: radial-gradient(white, #ffd484);
-  box-shadow: 0px 0px 35px rgb(255, 237, 203);
+  background: radial-gradient(
+      rgba(200, 200, 200, calc(1 - var(--intensity) * 0.01)),
+      rgba(200, 200, 200, calc(1 - var(--intensity) * 0.01))
+    ),
+    radial-gradient(white, rgb(255, 230, 157));
+  box-shadow: 0px 0px 35px rgba(255, 237, 203, calc(var(--intensity) * 0.015));
   position: absolute;
   translate: -5px -15px;
   border-radius: 100px;
-  transition: all 0.3s;
+  transition: scale 0.2s;
   &:hover {
-    scale: 1.1;
+    scale: 1.15;
   }
   &:active {
     cursor: grabbing;
@@ -102,14 +169,42 @@
 }
 
 .code {
-  font-size: 12px;
+  max-height: 50vh;
+  overflow: auto;
   background-color: #222;
   padding: 16px 20px;
   border-radius: 20px;
-  .attribute {
+  .property {
     color: rgb(226, 169, 0);
   }
   .comment {
     color: rgb(3, 170, 0);
   }
+  .variable {
+    color: rgb(57, 167, 241);
+  }
+  .indented {
+    padding-left: 20px;
+  }
+  .indented2 {
+    padding-left: 40px;
+  }
+}
+
+.main {
+  display: flex;
+}
+
+.text {
+  position: absolute;
+  user-drag: none;
+  top: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  text-align: center;
+  font-style: italic;
+  user-select: none;
+  font-size: 18px;
 }

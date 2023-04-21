@@ -10,6 +10,7 @@ interface NumControlProps {
   prefix?: string;
   suffix?: string;
   description?: string;
+  step?: number;
 }
 
 export default function NumControl({
@@ -21,12 +22,11 @@ export default function NumControl({
   description = "",
   min,
   max,
+  step = 1,
 }: NumControlProps) {
   return (
     <div className={styles["num-control"]}>
-      <label htmlFor={name}>
-        {description ? <abbr title={description}>{name}</abbr> : name}
-      </label>
+      <label htmlFor={name}>{description ? <abbr title={description}>{name}</abbr> : name}</label>
       <input
         id={name}
         name={name}
@@ -35,6 +35,7 @@ export default function NumControl({
         onChange={(e) => setValue(Number(e.target.value))}
         min={min}
         max={max}
+        step={step}
       />
       <span>
         {prefix}

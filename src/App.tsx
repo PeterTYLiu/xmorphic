@@ -3,11 +3,9 @@ import styles from "./App.module.scss";
 import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon } from "@radix-ui/react-icons";
 
-const pi = Math.PI;
-const borderColorModulator = 0.13;
-const backgroundGradientModulator = 0.06;
 const defaultColor = "#59a680";
 const colorInputTitleModulator = 0.8;
+type Mode = "skeuo" | "neu" | "glass" | "x";
 
 function adjustHexColor(hex: string, magnitude: number) {
   // magnitude is a float between -1 and 1;
@@ -19,10 +17,7 @@ function adjustHexColor(hex: string, magnitude: number) {
   const b = parseInt(hex.substring(5, 7), 16);
 
   const hexArr = [r, g, b].map((v) => {
-    const float =
-      clampedMag > 0
-        ? Math.min(v + (255 - v) * clampedMag, 255)
-        : v + v * clampedMag;
+    const float = clampedMag > 0 ? Math.min(v + (255 - v) * clampedMag, 255) : v + v * clampedMag;
     const str = Math.round(float).toString(16);
     return str.length === 1 ? `0${str}` : str;
   });
@@ -30,29 +25,37 @@ function adjustHexColor(hex: string, magnitude: number) {
   return `#${hexArr.join("")}`;
 }
 
-function toRad(deg: number) {
-  return deg * (pi / 180);
-}
-
 function hexIsLight(hex: string) {
   const num = parseInt(hex.substring(1), 16);
   return num > 256 ** 3 / 2;
 }
 
-function percentToHex(percent: number) {
-  const hex = Math.round(percent * 2.55).toString(16);
-  return hex.length === 1 ? `0${hex}` : hex;
+function numToHex(num: number) {
+  const str = (num * 255).toString(16);
+  return str.length === 1 ? `0${str}` : str.substring(0, 2);
+}
+
+function Var({ v }: { v: string }) {
+  return <span className={styles.variable}>{v}</span>;
+}
+
+function Prop({ p }: { p: string }) {
+  return <span className={styles.property}>{p}</span>;
 }
 
 function App() {
   const [radius, setRadius] = useState(8);
-  const [size, setSize] = useState(150);
+  const [size, setSize] = useState(175);
   const [color, setColor] = useState(defaultColor);
   const [backgroundColor, setBackgroundColor] = useState(defaultColor);
   const [angle, setAngle] = useState(225);
-  const [height, setHeight] = useState(10);
-  const [opacity, setOpacity] = useState(100);
+  const [elevation, setElevation] = useState(20);
+  const [intensity, setIntensity] = useState(50);
+  const [blurriness, setBlurriness] = useState(3);
+  const [bevel, setBevel] = useState(1.5);
+  const [opacity, setOpacity] = useState(0.5);
   const [isLinked, setIsLinked] = useState(true);
+  const [mode, setMode] = useState<Mode>("neu");
   const bulbRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -62,16 +65,10 @@ function App() {
   // The effect and event listers for dragging the light
   useEffect(() => {
     const pointermoveHandler = (event: PointerEvent) => {
-      const { left, top, bottom, right } = document
-        .getElementById("target")!
-        .getBoundingClientRect();
-      const [targetX, targetY] = [
-        left + (right - left) / 2,
-        top + (bottom - top) / 2,
-      ];
+      const { left, top, bottom, right } = document.getElementById("target")!.getBoundingClientRect();
+      const [targetX, targetY] = [left + (right - left) / 2, top + (bottom - top) / 2];
       const [pointerX, pointerY] = [event.clientX, event.clientY];
-      const angle =
-        (Math.atan2(targetY - pointerY, targetX - pointerX) * 180) / Math.PI;
+      const angle = (Math.atan2(targetY - pointerY, targetX - pointerX) * 180) / Math.PI;
       setAngle(Math.round(angle + 180));
     };
 
@@ -84,8 +81,7 @@ function App() {
       window.document.addEventListener("pointerup", pointerupHandler);
     };
 
-    if (bulbRef)
-      bulbRef.current?.addEventListener("pointerdown", pointerdownHandler);
+    if (bulbRef) bulbRef.current?.addEventListener("pointerdown", pointerdownHandler);
 
     return () => {
       bulbRef.current?.removeEventListener("pointerdown", pointerdownHandler);
@@ -96,59 +92,7 @@ function App() {
   // ==================== Intermediary Values ====================
   // =============================================================
 
-  const rads = toRad(angle);
-
-  const xDisplacement = Math.round(size * Math.cos(rads) * 0.01 * height);
-
-  const yDisplacement = Math.round(size * Math.sin(rads) * 0.01 * height);
-
-  const background = `linear-gradient(${
-    (angle + 90) % 360
-  }deg, ${adjustHexColor(color, -backgroundGradientModulator)}${
-    percentToHex(opacity) === "ff" ? "" : percentToHex(opacity)
-  }, ${adjustHexColor(color, backgroundGradientModulator)}${
-    percentToHex(opacity) === "ff" ? "" : percentToHex(opacity)
-  })`;
-
-  // =============================================================
-  // ======================== Box Shadow =========================
-  // =============================================================
-
-  const lightShadow = `${xDisplacement}px ${yDisplacement}px ${Math.round(
-    size * 0.02 * height
-  )}px #ffffff14`;
-
-  const darkShadow = `${-xDisplacement}px ${-yDisplacement}px ${Math.round(
-    size * 0.02 * (height + 0.5)
-  )}px #00000033`;
-
-  // Change which shadow is on top depending on the darkness of the primary color
-  const combinedShadow = hexIsLight(color)
-    ? `${darkShadow}, ${lightShadow}`
-    : `${lightShadow}, ${darkShadow}`;
-
-  const boxShadow = height ? combinedShadow : darkShadow;
-
-  // =============================================================
-  // ========================== Borders ==========================
-  // =============================================================
-
-  const borderTopColor = adjustHexColor(
-    color,
-    Math.sin(-rads) * borderColorModulator
-  );
-  const borderLeftColor = adjustHexColor(
-    color,
-    Math.sin(toRad(angle - 90)) * borderColorModulator
-  );
-  const borderBottomColor = adjustHexColor(
-    color,
-    Math.sin(rads) * borderColorModulator
-  );
-  const borderRightColor = adjustHexColor(
-    color,
-    Math.cos(rads) * borderColorModulator
-  );
+  const backgroundGradientAngle = (angle + 90) % 360;
 
   // =============================================================
   // ========================== The Page =========================
@@ -156,161 +100,279 @@ function App() {
 
   return (
     <div className={styles.App} style={{ backgroundColor }}>
-      <div className={styles.controls}>
-        <div className={styles.colors}>
-          <button onClick={() => setIsLinked(!isLinked)}>
-            {isLinked ? <Link2Icon /> : <LinkBreak2Icon />}
-          </button>
-          <div>
-            <input
-              type="color"
-              name="color"
-              value={color}
-              data-title={`Element color: ${color}`}
-              style={
-                {
-                  "--color": hexIsLight(color)
-                    ? adjustHexColor(color, -colorInputTitleModulator)
-                    : adjustHexColor(color, colorInputTitleModulator),
-                } as CSSProperties
-              }
-              onChange={({ target }) => {
-                setColor(target.value);
-                if (isLinked) setBackgroundColor(target.value);
-              }}
-            />
+      <header className={styles.header}>
+        <select onChange={(e) => setMode(e.target.value as Mode)}>
+          <option value="neu">neu</option>
+          <option value="glass">glass</option>
+          <option value="skeuo">skeuo</option>
+          <option value="x">𝑥</option>
+        </select>
+        morphic
+      </header>
+      <main className={styles.main}>
+        <div className={styles.controls}>
+          <div className={styles.colors}>
+            <button onClick={() => setIsLinked(!isLinked)}>{isLinked ? <Link2Icon /> : <LinkBreak2Icon />}</button>
+            <div>
+              <input
+                type="color"
+                name="color"
+                value={color}
+                data-title={`Element color: ${color}`}
+                style={
+                  {
+                    "--color": hexIsLight(color)
+                      ? adjustHexColor(color, -colorInputTitleModulator)
+                      : adjustHexColor(color, colorInputTitleModulator),
+                  } as CSSProperties
+                }
+                onChange={({ target }) => {
+                  setColor(target.value);
+                  if (isLinked) setBackgroundColor(target.value);
+                }}
+              />
 
-            <input
-              type="color"
-              name="background color"
-              value={backgroundColor}
-              data-title={`Background color: ${backgroundColor}`}
-              style={
-                {
-                  "--color": hexIsLight(backgroundColor)
-                    ? adjustHexColor(backgroundColor, -colorInputTitleModulator)
-                    : adjustHexColor(backgroundColor, colorInputTitleModulator),
-                } as CSSProperties
-              }
-              onChange={({ target }) => {
-                setBackgroundColor(target.value);
-                if (isLinked) setColor(target.value);
-              }}
-            />
+              <input
+                type="color"
+                name="background color"
+                value={backgroundColor}
+                data-title={`Background color: ${backgroundColor}`}
+                style={
+                  {
+                    "--color": hexIsLight(backgroundColor)
+                      ? adjustHexColor(backgroundColor, -colorInputTitleModulator)
+                      : adjustHexColor(backgroundColor, colorInputTitleModulator),
+                  } as CSSProperties
+                }
+                onChange={({ target }) => {
+                  setBackgroundColor(target.value);
+                  if (isLinked) setColor(target.value);
+                }}
+              />
+            </div>
+            {!isLinked && color !== backgroundColor && (
+              <button
+                onClick={() => {
+                  setBackgroundColor(color);
+                  setColor(backgroundColor);
+                }}
+              >
+                <HeightIcon />
+              </button>
+            )}
           </div>
-          {!isLinked && color !== backgroundColor && (
-            <button
-              onClick={() => {
-                setBackgroundColor(color);
-                setColor(backgroundColor);
-              }}
-            >
-              <HeightIcon />
-            </button>
+          <NumControl name="Size" value={size} setValue={setSize} min={25} max={225} suffix="px" />
+
+          <NumControl name="Radius" value={radius} setValue={setRadius} min={0} max={50} suffix="%" />
+
+          <NumControl name="Angle" value={angle} setValue={setAngle} min={0} max={360} suffix="°" />
+
+          <NumControl
+            name="Elevation"
+            value={elevation}
+            description="The element can be thought of as a physical object with a certain elevation above the ground; the size and shape of its shadows are in part determined by this elevation"
+            setValue={setElevation}
+            min={0}
+            max={40}
+          />
+
+          <NumControl name="Intensity" value={intensity} setValue={setIntensity} min={0} max={100} />
+          <NumControl name="Bevel" value={bevel} setValue={setBevel} min={0} max={20} step={0.1} />
+
+          {mode === "glass" && (
+            <>
+              <NumControl name="Opacity" value={opacity} setValue={setOpacity} min={0} max={1} step={0.01} />
+              <NumControl name="Blur" value={blurriness} setValue={setBlurriness} min={0} max={10} step={0.1} />
+            </>
           )}
         </div>
-        <NumControl
-          name="Size"
-          value={size}
-          setValue={setSize}
-          min={50}
-          max={200}
-          suffix="px"
-        />
 
-        <NumControl
-          name="Radius"
-          value={radius}
-          setValue={setRadius}
-          min={0}
-          max={50}
-          suffix="%"
-        />
-
-        <NumControl
-          name="Angle"
-          value={angle}
-          setValue={setAngle}
-          min={0}
-          max={360}
-          suffix="°"
-        />
-
-        <NumControl
-          name="Height"
-          value={height}
-          description="The element can be thought of as a physical object with a certain height above the ground; the size and shape of its shadows are in part determined by this height"
-          setValue={setHeight}
-          min={0}
-          max={30}
-        />
-
-        <NumControl
-          name="Opacity"
-          value={opacity}
-          setValue={setOpacity}
-          min={0}
-          max={100}
-          suffix="%"
-        />
-      </div>
-
-      <div className={styles.container}>
-        <div className={styles.light} style={{ rotate: angle + 90 + "deg" }}>
-          <div className={styles.bulb} ref={bulbRef} />
+        <div className={styles.container}>
+          {mode === "glass" && (
+            <div
+              className={styles.text}
+              style={{
+                color: hexIsLight(backgroundColor)
+                  ? adjustHexColor(backgroundColor, -colorInputTitleModulator)
+                  : adjustHexColor(backgroundColor, colorInputTitleModulator),
+              }}
+            >
+              For my military knowledge, though I'm plucky and adventury,
+              <br />
+              Has only been brought down to the beginning of the century;
+              <br />
+              But still, in matters vegetable, animal, and mineral,
+              <br />I am the very model of a modern Major-General.
+            </div>
+          )}
+          <div className={styles.light} style={{ rotate: angle + 90 + "deg" }}>
+            <div className={styles.bulb} ref={bulbRef} style={{ "--intensity": intensity } as CSSProperties} />
+          </div>
+          <div
+            className={`${styles.target} ${styles[mode]}`}
+            id="target"
+            style={
+              {
+                "--blur": `${blurriness}px`,
+                "--radius": radius + "%",
+                "--color": color,
+                "--bevel": bevel + "px",
+                "--glass-bg": color + numToHex(opacity),
+                "--angle": `${backgroundGradientAngle}deg`,
+                "--elevation": elevation,
+                "--intensity": intensity,
+                "--size": size + "px",
+              } as CSSProperties
+            }
+          />
         </div>
-        <div
-          className={styles.target}
-          id="target"
-          style={{
-            borderRadius: radius + "%",
-            background,
-            width: size + "px",
-            height: size + "px",
-            borderTopColor,
-            borderBottomColor,
-            borderLeftColor,
-            borderRightColor,
-            boxShadow,
-          }}
-        />
-      </div>
 
-      <pre className={styles.code}>
-        <span className={styles.comment}>/*** Primary color: {color} ***/</span>
-        <br />
-        {!isLinked && (
-          <>
-            <span className={styles.comment}>
-              /*** Background color: {backgroundColor} ***/
-            </span>
-            <br />
-          </>
-        )}
-        <br />
-        <span className={styles.attribute}>border-radius:</span> {radius}%;
-        <br />
-        <span className={styles.attribute}>background:</span> {background};
-        <br />
-        <span className={styles.attribute}>box-shadow:</span> {boxShadow};
-        <br />
-        <br />
-        <span className={styles.attribute}>border-width:</span> 1px;
-        <br />
-        <span className={styles.attribute}>border-style:</span> solid;
-        <br />
-        <span className={styles.attribute}>border-top-color:</span>{" "}
-        {borderTopColor};
-        <br />
-        <span className={styles.attribute}>border-left-color:</span>{" "}
-        {borderLeftColor};
-        <br />
-        <span className={styles.attribute}>border-bottom-color:</span>{" "}
-        {borderBottomColor};
-        <br />
-        <span className={styles.attribute}>border-right-color:</span>{" "}
-        {borderRightColor};
-      </pre>
+        <pre className={styles.code}>
+          {!isLinked && (
+            <>
+              <span className={styles.property}>background-color:</span> {backgroundColor};{" "}
+              <span className={styles.comment}>/* Put this on the element's parent */</span>
+              <br />
+              <br />
+            </>
+          )}
+          <span className={styles.comment}>/*========= Configurable Variables =========*/</span>
+          <br />
+          <span className={styles.comment}>/*=========== Only these change! ===========*/</span>
+          <br />
+          <Var v="--primary-color" />: {color};
+          <br />
+          <Var v="--size" />: {size}px;
+          <br />
+          <Var v="--radius" />: {radius}%;
+          <br />
+          <Var v="--angle" />: {backgroundGradientAngle}deg;
+          <br />
+          <Var v="--elevation" />: {elevation};
+          <br />
+          <Var v="--intensity" />: {intensity};
+          <br />
+          <Var v="--bevel" />: {bevel}px;
+          <br />
+          <br />
+          <span className={styles.comment}>/*=========== Computed Variables ===========*/</span>
+          <br />
+          <Var v="--sin" />: calc(sin(var(
+          <Var v="--angle" />
+          )));
+          <br />
+          <Var v="--sin-90" />: calc(sin(var(
+          <Var v="--angle" />
+          ) + 90deg));;
+          <br />
+          <Var v="--sin-180" />: calc(sin(var(
+          <Var v="--angle" />
+          ) + 180deg));;
+          <br />
+          <Var v="--sin-270" />: calc(sin(var(
+          <Var v="--angle" />
+          ) + 270deg));;
+          <br />
+          <Var v="--x-displacement" />: calc(var(
+          <Var v="--size" />) * var(
+          <Var v="--sin-180" />) * 0.01 * var(
+          <Var v="--elevation" />
+          ));
+          <br />
+          <Var v="--y-displacement" />: calc(var(
+          <Var v="--size" />) * var(
+          <Var v="--sin-90" />) * 0.01 * var(
+          <Var v="--elevation" />
+          ));
+          <br />
+          <Var v="--edge-opacity" />: calc(var(
+          <Var v="--elevation" />) * 0.003);
+          <br />
+          <br />
+          <span className={styles.comment}>/*=========== Computed Properties ===========*/</span>
+          <br />
+          <Prop p="width" />: <Var v="--size" />;
+          <br />
+          <Prop p="border-radius" />: <Var v="--radius" />;
+          <br />
+          <Prop p="background" />: linear-gradient(
+          <br />
+          <span className={styles.indented2}>
+            var(
+            <Var v="--angle" />
+            ),
+          </span>
+          <br />
+          <span className={styles.indented2}>
+            rgba(0, 0, 0, calc(var(
+            <Var v="--intensity" />) * 0.002)),
+          </span>
+          <br />
+          <span className={styles.indented2}>
+            rgba(255, 255, 255, calc(var(
+            <Var v="--intensity" />) * 0.002))
+          </span>
+          <br />
+          <span className={styles.indented}>),</span>
+          <br />
+          <span className={styles.indented}>
+            var(
+            <Var v="--primary-color" />
+            );
+          </span>
+          <br />
+          <Prop p="box-shadow" />: calc(var(
+          <Var v="--x-displacement" />) * -1) calc(var(
+          <Var v="--y-displacement" />) * -1) calc(var(
+          <Var v="--size" />) * 2.5) rgba(255, 255, 255, calc(var(
+          <Var v="--intensity" />) * 0.004)),
+          <br />
+          <span className={styles.indented}>
+            var(
+            <Var v="--x-displacement" />) var(
+            <Var v="--y-displacement" />) calc(var(
+            <Var v="--size" />) * 0.02 * var(
+            <Var v="--elevation" />
+            )) rgba(0, 0, 0, calc(var(
+            <Var v="--intensity" />) * 0.006)),
+          </span>
+          <br />
+          <span className={styles.indented}>
+            inset -1px 0 hsla(100, 0%, calc((var(
+            <Var v="--sin" />) + 1) * 50%), var(
+            <Var v="--edge-opacity" />
+            )),
+          </span>
+          <br />
+          <span className={styles.indented}>
+            inset 0 1px hsla(100, 0%, calc((var(
+            <Var v="--sin-90" />) + 1) * 50%), var(
+            <Var v="--edge-opacity" />
+            )),
+          </span>
+          <br />
+          <span className={styles.indented}>
+            inset 1px 0 hsla(100, 0%, calc((var(
+            <Var v="--sin-180" />) + 1) * 50%), var(
+            <Var v="--edge-opacity" />
+            )),
+          </span>
+          <br />
+          <span className={styles.indented}>
+            inset 0 -1px hsla(100, 0%, calc((var(
+            <Var v="--sin-270" />) + 1) * 50%), var(
+            <Var v="--edge-opacity" />
+            ));
+          </span>
+          <br />
+          <br />
+          <span className={styles.comment}>/*============ Static Properties ============*/</span>
+          <br />
+          <Prop p="background-blend-mode" />: soft-light;
+          <br />
+          <Prop p="aspect-ratio" />: 1;
+        </pre>
+      </main>
     </div>
   );
 }
