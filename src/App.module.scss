@@ -6,7 +6,6 @@ $animation-speed: 0.3s;
 }
 
 .app {
-  position: relative;
   padding: 24px;
   min-height: 100vh;
   min-height: 100dvh;
@@ -122,6 +121,7 @@ $animation-speed: 0.3s;
 }
 
 .container {
+  touch-action: none;
   @media screen and (max-width: $breakpoint) {
     order: -1;
   }
@@ -241,7 +241,7 @@ $animation-speed: 0.3s;
 .links {
   display: flex;
   gap: 4px;
-  position: absolute;
+  position: fixed;
   top: 20px;
   right: 20px;
   @media screen and (max-width: $breakpoint) {
