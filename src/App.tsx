@@ -3,6 +3,7 @@ import styles from "./App.module.scss";
 import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon, CopyIcon, GitHubLogoIcon, LinkedInLogoIcon, Share1Icon } from "@radix-ui/react-icons";
 import About from "./components/About/About";
+import share from "./utilities/share";
 
 const defaultColor = "#ff8c2e";
 const defaultBackgroundColor = "#38c3b9";
@@ -55,11 +56,6 @@ function copyCode() {
     .writeText(code)
     .then(() => alert("Copied to clipboard!"))
     .catch(() => alert("Failed to copy :("));
-}
-
-function share() {
-  if (navigator.canShare()) {
-  }
 }
 
 function Var({ v }: { v: string }) {
@@ -203,13 +199,13 @@ function App() {
       }
     >
       <div className={styles.links}>
-        <a href="https://github.com/PeterTYLiu/xmorphic" target="_blank">
+        <a title="View this repo on GitHub" href="https://github.com/PeterTYLiu/xmorphic" target="_blank">
           <GitHubLogoIcon />
         </a>
-        <a href="https://www.linkedin.com/in/peter-ty-liu/" target="_blank">
+        <a title="LinkedIn" href="https://www.linkedin.com/in/peter-ty-liu/" target="_blank">
           <LinkedInLogoIcon />
         </a>
-        <button>
+        <button title="share site" onClick={share}>
           <Share1Icon />
         </button>
       </div>

@@ -1,4 +1,5 @@
 import styles from "./About.module.scss";
+import share from "../../utilities/share";
 
 export default function About({ color }: { color: string }) {
   return (
@@ -61,7 +62,7 @@ export default function About({ color }: { color: string }) {
             </a>
           </li>
           <li>
-            <a>share this site</a>
+            <a onClick={share}>share this site</a>
           </li>
           <li>
             {" "}

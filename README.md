@@ -6,7 +6,7 @@
 
 - **Portability:** Once your CSS is generated, you shouldn't have to come back to the website if you want tweak its parameters. 𝑥morphic generates CSS with accessible variables that even non-developers can adjust locally.
 
-- **Realism:** 𝑥morphic leans on real-world physical properties to create its styles. This not only looks good, but also ensures that (almost) every combination of parameters results in a realistic-looking element. ([neumorphism.io](https://neumorphism.io), by comparison, cannot generate pleasing styles given a very light or very dark color input)
+- **Realism:** 𝑥morphic leans on real-world physical properties to create its styles. This not only looks good, but also ensures that (almost) every combination of parameters results in a realistic-looking element.
 
 - **Using the platform:** 𝑥morphic takes advantage of CSS variables and other modern CSS features, without requiring third-party libraries or Javascript.
 

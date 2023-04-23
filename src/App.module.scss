@@ -17,6 +17,7 @@ $animation-speed: 0.3s;
 
 .bulb {
   cursor: grab;
+  touch-action: none;
   width: 30px;
   height: 30px;
   position: absolute;
@@ -121,7 +122,6 @@ $animation-speed: 0.3s;
 }
 
 .container {
-  touch-action: none;
   @media screen and (max-width: $breakpoint) {
     order: -1;
   }
