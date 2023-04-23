@@ -1,34 +1,33 @@
-@keyframes liftIn {
-  0% {
-    opacity: 0;
-    translate: 0 100px;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0px;
-  }
+$breakpoint: 1150px;
+$animation-speed: 0.3s;
+
+:global(.animated) {
+  transition: all $animation-speed;
 }
 
 .app {
-  padding: 60px;
-  height: 100vh;
-  height: 100dvh;
-  --edge-opacity: calc(var(--intensity) * 0.003);
-  --sheen-offset: max(calc(var(--bevel) / 2), 3px);
+  position: relative;
+  padding: 24px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  transition: background-color $animation-speed;
+  --surface-contrast: calc(var(--intensity) * 0.01 - var(--diffusion) * 0.005);
+  --edge-opacity: calc(var(--intensity) * 0.006 - var(--diffusion) * 0.002);
+  --edge-blur: calc(var(--bevel) * 1.5);
 }
 
 .bulb {
   cursor: grab;
   width: 30px;
   height: 30px;
+  position: absolute;
+  translate: -5px -15px;
   background: radial-gradient(
       rgba(200, 200, 200, calc(1 - var(--intensity) * 0.01)),
       rgba(200, 200, 200, calc(1 - var(--intensity) * 0.01))
     ),
     radial-gradient(white, rgb(255, 230, 157));
   box-shadow: 0px 0px 35px rgba(255, 237, 203, calc(var(--intensity) * 0.015));
-  position: absolute;
-  translate: -5px -15px;
   border-radius: 100px;
   transition: scale 0.2s;
   &:hover {
@@ -39,46 +38,65 @@
   }
 }
 
+.copy {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
 .code {
-  max-height: 50vh;
-  overflow: auto;
-  .property {
-    color: rgb(226, 169, 0);
+  max-height: 600px;
+  position: relative;
+  display: flex;
+  @media screen and (max-width: $breakpoint) {
+    max-height: 300px;
   }
-  .comment {
-    color: rgb(3, 170, 0);
-  }
-  .variable {
-    color: rgb(57, 167, 241);
-  }
-  .indented {
-    padding-left: 20px;
-  }
-  .indented2 {
-    padding-left: 40px;
+  .pre {
+    overflow: auto;
+    .selector {
+      color: rgb(237, 40, 255);
+    }
+    .property {
+      color: rgb(238, 179, 0);
+    }
+    .comment {
+      color: rgb(3, 170, 0);
+    }
+    .variable {
+      color: rgb(57, 167, 241);
+    }
+    .indented {
+      padding-left: 20px;
+    }
+    .indented2 {
+      padding-left: 40px;
+    }
   }
 }
 
 .code,
 .controls {
-  background-color: #22222299;
+  background-color: #000000aa;
   padding: 16px 20px;
   border-radius: 20px;
   flex-basis: 400px;
+  max-width: 400px;
   flex-shrink: 1;
-  min-width: 300px;
+  min-width: 320px;
+  @media screen and (max-width: $breakpoint) {
+    width: 100%;
+  }
 }
 
 .colors {
   display: flex;
-  margin-bottom: 20px;
   align-items: center;
   gap: 8px;
   > div {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     input {
       width: 100%;
       height: 32px;
@@ -101,19 +119,15 @@
       }
     }
   }
-  button {
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-  }
 }
 
 .container {
+  @media screen and (max-width: $breakpoint) {
+    order: -1;
+  }
+  flex-shrink: 0;
   aspect-ratio: 1;
-  width: 400px;
-  height: 400px;
+  width: min(400px, 90vw);
   display: grid;
   border-radius: 100%;
   place-items: center;
@@ -128,12 +142,25 @@
 .controls {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+
+  h2 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  details {
+    font-size: 13px;
+    margin-top: 8px;
+    p {
+      margin-top: 8px;
+    }
+  }
 }
 
 .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
 }
 
 .light {
@@ -144,139 +171,166 @@
 }
 
 .logo {
-  select {
-    font-size: 24px;
-    z-index: 5;
-    border-radius: 8px;
-    padding: 4px 8px;
+  text-align: center;
+  padding: 20px 50px;
+  margin-bottom: 60px;
+  h1 {
+    font-size: 20px;
+    margin: 0;
   }
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  z-index: 5;
-  position: relative;
-  padding: 0 20px;
-  background-blend-mode: soft-light;
+  h1,
+  p {
+    position: relative;
+    z-index: 5;
+  }
 
-  --height: 70px;
-  --radius: 12px;
-
-  --sin: calc(sin(var(--angle)));
-  --sin-90: calc(sin(var(--angle) + 90deg));
-  --sin-180: calc(sin(var(--angle) + 180deg));
-  --sin-270: calc(sin(var(--angle) + 270deg));
-  --x-displacement: calc(var(--height) * var(--sin-180) * 0.01 * var(--elevation));
-  --y-displacement: calc(var(--height) * var(--sin-90) * 0.01 * var(--elevation));
-
-  border-radius: var(--radius);
-  height: var(--height);
-
-  box-shadow: calc(var(--x-displacement) * -1) calc(var(--y-displacement) * -1) calc(var(--height) * 2.5)
-      rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
-    var(--x-displacement) var(--y-displacement) calc(var(--height) * 0.02 * var(--elevation)) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
-    inset calc(var(--bevel) * -1) 0 var(--bevel) hsla(100, 0%, calc((var(--sin) + 1) * 50%), var(--edge-opacity)),
-    inset 0 var(--bevel) var(--bevel) hsla(100, 0%, calc((var(--sin-90) + 1) * 50%), var(--edge-opacity)),
-    inset var(--bevel) 0 var(--bevel) hsla(100, 0%, calc((var(--sin-180) + 1) * 50%), var(--edge-opacity)),
-    inset 0 calc(var(--bevel) * -1) var(--bevel) hsla(100, 0%, calc((var(--sin-270) + 1) * 50%), var(--edge-opacity));
-
-  &.skeuo {
-    &::before {
-      content: "";
-      position: absolute;
-      bottom: var(--sheen-offset);
-      top: var(--sheen-offset);
-      right: var(--sheen-offset);
-      left: var(--sheen-offset);
-      border-radius: var(--radius);
-      background: linear-gradient(
-        var(--angle),
-        hsla(0, 0%, 0%, calc(var(--intensity) / 550)),
-        hsla(0, 0%, 100%, 0) 40%,
-        hsla(0, 0%, 100%, 0) 60%,
-        hsla(0, 0%, 100%, calc(var(--intensity) / 150))
-      );
+  @media screen and (max-width: $breakpoint) {
+    padding: 16px;
+    margin-bottom: 40px;
+    margin-left: 30px;
+    margin-right: 30px;
+    h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    p {
+      font-size: 14px;
     }
   }
+
+  --radius: 12px;
+
+  border-radius: var(--radius);
 }
 
 .glass {
   background-color: color-mix(in srgb, var(--color) var(--opacity), transparent calc(100% - var(--opacity)));
   backdrop-filter: blur(var(--blurriness));
+  position: relative;
   &::before {
     content: "";
     position: absolute;
-    bottom: var(--bevel);
-    top: var(--bevel);
-    left: var(--bevel);
-    right: var(--bevel);
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     border-radius: var(--radius);
-    background: linear-gradient(var(--angle), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, calc(var(--intensity) / 350)));
+    background: linear-gradient(calc(var(--angle) + 90deg), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, var(--surface-contrast)));
+  }
+}
+
+.glass,
+.neu {
+  --sin: calc(sin(var(--angle)));
+  --sin-90: calc(sin(var(--angle) + 90deg));
+  --sin-180: calc(sin(var(--angle) + 180deg));
+  --sin-270: calc(sin(var(--angle) + 270deg));
+  --x-displacement: calc(var(--sin-270) * (var(--elevation) + 1px));
+  --y-displacement: calc(var(--sin-180) * (var(--elevation) + 1px));
+
+  background-blend-mode: soft-light;
+  box-shadow: var(--x-displacement) var(--y-displacement) calc(var(--diffusion) * 0.3px + (var(--elevation) * 0.15))
+      calc(var(--elevation) / 2) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
+    0px 0px calc(var(--diffusion) * 1.4px) rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
+    inset calc(var(--bevel) * -1) 0 var(--edge-blur) hsla(100, 0%, calc((var(--sin-90) + 1) * 50%), var(--edge-opacity)),
+    inset 0 var(--bevel) var(--edge-blur) hsla(100, 0%, calc((var(--sin-180) + 1) * 50%), var(--edge-opacity)),
+    inset var(--bevel) 0 var(--edge-blur) hsla(100, 0%, calc((var(--sin-270) + 1) * 50%), var(--edge-opacity)),
+    inset 0 calc(var(--bevel) * -1) var(--edge-blur) hsla(100, 0%, calc((var(--sin) + 1) * 50%), var(--edge-opacity));
+}
+
+.links {
+  display: flex;
+  gap: 4px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  @media screen and (max-width: $breakpoint) {
+    flex-direction: column;
+    top: 12px;
+    right: 12px;
+  }
+  > * {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 99px;
+    background-color: rgba(0, 0, 0, 0.303);
+    border: none;
+    color: white;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.445);
+    }
   }
 }
 
 .main {
   display: flex;
-  gap: 24px;
+  gap: 16px;
+  align-items: stretch;
+  justify-content: space-between;
+  align-items: start;
+  padding-bottom: 60px;
+  @media screen and (max-width: $breakpoint) {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
-.neu,
-.skeuo {
-  background: linear-gradient(
-      var(--angle),
-      rgba(0, 0, 0, calc(var(--intensity) * 0.002)),
-      rgba(255, 255, 255, calc(var(--intensity) * 0.002))
-    ),
-    var(--color);
-}
-
-.target {
-  --sin: calc(sin(var(--angle)));
-  --sin-90: calc(sin(var(--angle) + 90deg));
-  --sin-180: calc(sin(var(--angle) + 180deg));
-  --sin-270: calc(sin(var(--angle) + 270deg));
-  --x-displacement: calc(var(--size) * var(--sin-180) * 0.01 * var(--elevation));
-  --y-displacement: calc(var(--size) * var(--sin-90) * 0.01 * var(--elevation));
-
-  aspect-ratio: 1;
-  position: relative;
-  background-blend-mode: soft-light;
-
-  width: var(--size);
-  border-radius: var(--radius);
-
-  box-shadow: calc(var(--x-displacement) * -1) calc(var(--y-displacement) * -1) calc(var(--size) * 2.5)
-      rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
-    var(--x-displacement) var(--y-displacement) calc(var(--size) * 0.02 * var(--elevation)) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
-    inset calc(var(--bevel) * -1) 0 var(--bevel) hsla(100, 0%, calc((var(--sin) + 1) * 50%), var(--edge-opacity)),
-    inset 0 var(--bevel) var(--bevel) hsla(100, 0%, calc((var(--sin-90) + 1) * 50%), var(--edge-opacity)),
-    inset var(--bevel) 0 var(--bevel) hsla(100, 0%, calc((var(--sin-180) + 1) * 50%), var(--edge-opacity)),
-    inset 0 calc(var(--bevel) * -1) var(--bevel) hsla(100, 0%, calc((var(--sin-270) + 1) * 50%), var(--edge-opacity));
-
-  &.skeuo {
-    &::before {
-      content: "";
-      position: absolute;
-      bottom: var(--sheen-offset);
-      top: var(--sheen-offset);
-      right: var(--sheen-offset);
-      left: var(--sheen-offset);
-      border-radius: var(--radius);
-      background: linear-gradient(
-        var(--angle),
-        hsla(0, 0%, 0%, calc(var(--intensity) / 550)),
-        hsla(0, 0%, 100%, 0) 40%,
-        hsla(0, 0%, 100%, 0) 60%,
-        hsla(0, 0%, 100%, calc(var(--intensity) / 150))
-      );
+.modes {
+  display: flex;
+  button {
+    flex-grow: 1;
+    font-size: 16px;
+    border-radius: 4px;
+    display: block;
+    &.active {
+      font-weight: bold;
+      border-color: #ccc;
+    }
+    &:first-child {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+    &:last-child {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
     }
   }
 }
 
+.neu {
+  background: linear-gradient(
+      calc(var(--angle) + 90deg),
+      rgba(0, 0, 0, var(--surface-contrast)),
+      rgba(255, 255, 255, var(--surface-contrast))
+    ),
+    var(--color);
+}
+
+.phantom-light {
+  pointer-events: none;
+}
+
+.phantom-bulb {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  translate: -5px -15px;
+  pointer-events: none;
+}
+
+.random {
+  width: 100%;
+}
+
+.target {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+}
+
 .text {
   position: absolute;
-  animation: liftIn 0.4s ease-in-out;
-  user-drag: none;
   top: 0;
   bottom: 0;
   display: grid;
@@ -286,4 +340,8 @@
   font-style: italic;
   user-select: none;
   font-size: 18px;
+  @media screen and (max-width: $breakpoint) {
+    font-size: 16px;
+    padding: 30px;
+  }
 }

@@ -1,17 +1,23 @@
 .num-control {
   display: flex;
-  gap: 8px;
+  height: 26px;
+  input {
+    margin: 0;
+    flex-grow: 1;
+  }
   label {
     user-select: none;
     width: 70px;
     flex-shrink: 0;
+    margin-right: 4px;
     abbr {
       cursor: help;
     }
   }
   span {
-    width: 70px;
+    width: 55px;
     user-select: none;
     flex-shrink: 0;
+    text-align: end;
   }
 }
