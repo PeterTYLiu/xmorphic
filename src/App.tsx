@@ -4,7 +4,7 @@ import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon, CopyIcon, GitHubLogoIcon, LinkedInLogoIcon, Share1Icon } from "@radix-ui/react-icons";
 import About from "./components/About/About";
 
-const defaultColor = "#ff141f";
+const defaultColor = "#ff8c2e";
 const defaultBackgroundColor = "#38c3b9";
 const colorInputTitleModulator = 0.8;
 const minSize = 25;
