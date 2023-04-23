@@ -2,6 +2,7 @@
   "name": "xmorphic",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://petertyliu.github.io",
   "type": "module",
   "scripts": {
     "dev": "vite",
