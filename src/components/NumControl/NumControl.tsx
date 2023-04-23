@@ -13,20 +13,12 @@ interface NumControlProps {
   step?: number;
 }
 
-export default function NumControl({
-  value,
-  setValue,
-  name,
-  prefix = "",
-  suffix = "",
-  description = "",
-  min,
-  max,
-  step = 1,
-}: NumControlProps) {
+export default function NumControl({ value, setValue, name, prefix = "", suffix = "", description, min, max, step = 1 }: NumControlProps) {
   return (
     <div className={styles["num-control"]}>
-      <label htmlFor={name}>{description ? <abbr title={description}>{name}</abbr> : name}</label>
+      <label htmlFor={name} data-tooltip={description} className={description ? styles.tooltip : ""}>
+        {name}
+      </label>
       <input
         id={name}
         name={name}

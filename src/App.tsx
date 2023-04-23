@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type CSSProperties } from "react";
+import { useState, useEffect, useRef, type CSSProperties, ReactNode } from "react";
 import styles from "./App.module.scss";
 import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon, CopyIcon, GitHubLogoIcon, LinkedInLogoIcon, Share1Icon } from "@radix-ui/react-icons";
@@ -68,6 +68,10 @@ function Prop({ p }: { p: string }) {
 
 function Selector({ s }: { s: string }) {
   return <span className={styles.selector}>{s}</span>;
+}
+
+function Indent({ children }: { children: ReactNode }) {
+  return <div className={styles.indented}>{children}</div>;
 }
 
 function angleBetween(p1: [number, number], p2: [number, number]) {
@@ -404,13 +408,14 @@ function App() {
           </button>
           <pre className={styles.pre}>
             <Selector s=".parent" /> {"{"}
-            <br />
-            <span className={`${styles.property} ${styles.indented}`}>background-color:</span> {backgroundColor}; <br />
+            <Indent>
+              <Prop p="background-color" />: {backgroundColor};
+            </Indent>
             {"}"}
             <br />
             <br />
             <Selector s=".my-element" /> {"{"}
-            <div className={styles.indented}>
+            <Indent>
               <span className={styles.comment}>/*===== Configurable Variables =====*/</span>
               <br />
               <span className={styles.comment}>/*======= Only these change! =======*/</span>
@@ -456,98 +461,72 @@ function App() {
               <Var v="--angle" />
               ) + 270deg));
               <br />
+              <Var v="--x-displacement" />: calc(var(
+              <Var v="--sin-270" />) * (var(
+              <Var v="--elevation" />) + 1px));
+              <br />
+              <Var v="--y-displacement" />: calc(var(
+              <Var v="--sin-180" />) * (var(
+              <Var v="--elevation" />) + 1px));
+              <br />
               <Var v="--edge-opacity" />: calc(var(
-              <Var v="--elevation" />) * 0.003);
+              <Var v="--intensity" />) * 0.006 - var(
+              <Var v="--diffusion" />) * 0.002);
+              <br />
+              <Var v="--edge-blur" />: calc(var(
+              <Var v="--bevel" />) * 1.5);
+              <br />
+              <Var v="--surface-contrast" />: calc(var(
+              <Var v="--intensity" />) * 0.01 - var(
+              <Var v="--diffusion" />) * 0.005);
               <br />
               <br />
               <span className={styles.comment}>/*======= Computed Properties =======*/</span>
-              <br />
-              <Prop p="width" />: var(
-              <Var v="--size" />
-              );
-              <br />
-              <Prop p="height" />: var(
-              <Var v="--size" />
-              );
               <br />
               <Prop p="border-radius" />: var(
               <Var v="--radius" />
               );
               <br />
-              {mode !== "glass" && (
-                <>
-                  <Prop p="background" />: linear-gradient(
-                  <br />
-                  <span className={styles.indented2}>
-                    var(
-                    <Var v="--angle" />
-                    ),
-                  </span>
-                  <br />
-                  <span className={styles.indented2}>
-                    rgba(0, 0, 0, calc(var(
-                    <Var v="--intensity" />) * 0.002)),
-                  </span>
-                  <br />
-                  <span className={styles.indented2}>
-                    rgba(255, 255, 255, calc(var(
-                    <Var v="--intensity" />) * 0.002))
-                  </span>
-                  <br />
-                  <span className={styles.indented}>),</span>
-                  <br />
-                  <span className={styles.indented}>
-                    var(
-                    <Var v="--color" />
-                    );
-                  </span>
-                  <br />
-                </>
-              )}
-              <Prop p="box-shadow" />: calc(var(
-              <Var v="--x-displacement" />) * -1) calc(var(
-              <Var v="--y-displacement" />) * -1) calc(var(
-              <Var v="--size" />) * 2.5) rgba(255, 255, 255, calc(var(
-              <Var v="--intensity" />) * 0.004)),
-              <br />
-              <span className={styles.indented}>
-                var(
-                <Var v="--x-displacement" />) var(
-                <Var v="--y-displacement" />) calc(var(
-                <Var v="--size" />) * 0.02 * var(
-                <Var v="--elevation" />
-                )) rgba(0, 0, 0, calc(var(
-                <Var v="--intensity" />) * 0.006)),
-              </span>
-              <br />
-              <span className={styles.indented}>
-                inset -1px 0 hsla(100, 0%, calc((var(
-                <Var v="--sin" />) + 1) * 50%), var(
-                <Var v="--edge-opacity" />
-                )),
-              </span>
-              <br />
-              <span className={styles.indented}>
-                inset 0 1px hsla(100, 0%, calc((var(
+              <Prop p="box-shadow" />: var(
+              <Var v="--x-displacement" />) var(
+              <Var v="--y-displacement" />) calc(var(
+              <Var v="--diffusion" />) * 0.3px + (var(
+              <Var v="--elevation" />) * 0.15)) calc(var(
+              <Var v="--elevation" />) / 2) rgba(0, 0, 0, calc(var(
+              <Var v="--intensity" />) * 0.006)),
+              <Indent>
+                0px 0px calc(var(
+                <Var v="--diffusion" />) * 1.4px) rgba(255, 255, 255, calc(var(
+                <Var v="--intensity" />) * 0.004)),
+                <br />
+                inset calc(var(
+                <Var v="--bevel" />) * -1) 0 var(
+                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
                 <Var v="--sin-90" />) + 1) * 50%), var(
                 <Var v="--edge-opacity" />
                 )),
-              </span>
-              <br />
-              <span className={styles.indented}>
-                inset 1px 0 hsla(100, 0%, calc((var(
+                <br />
+                inset 0 var(
+                <Var v="--bevel" />) var(
+                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
                 <Var v="--sin-180" />) + 1) * 50%), var(
                 <Var v="--edge-opacity" />
                 )),
-              </span>
-              <br />
-              <span className={styles.indented}>
-                inset 0 -1px hsla(100, 0%, calc((var(
+                <br />
+                inset var(
+                <Var v="--bevel" />) 0 var(
+                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
                 <Var v="--sin-270" />) + 1) * 50%), var(
                 <Var v="--edge-opacity" />
+                )),
+                <br />
+                inset 0 calc(var(
+                <Var v="--bevel" />) * -1) var(
+                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
+                <Var v="--sin" />) + 1) * 50%), var(
+                <Var v="--edge-opacity" />
                 ));
-              </span>
-              <br />
+              </Indent>
               {mode === "glass" && (
                 <>
                   <Prop p="backdrop-filter" />: blur(var(
@@ -563,19 +542,68 @@ function App() {
                   <br />
                 </>
               )}
+              {mode !== "glass" && (
+                <>
+                  <Prop p="background" />: linear-gradient(
+                  <Indent>
+                    calc(var(
+                    <Var v="--angle" />) + 90deg),
+                    <br />
+                    rgba(0, 0, 0, var(
+                    <Var v="--surface-contrast" />
+                    )),
+                    <br />
+                    rgba(255, 255, 255, var(
+                    <Var v="--surface-contrast" />
+                    ))
+                    <br />
+                    ),
+                    <br />
+                    var(
+                    <Var v="--color" />
+                    );
+                  </Indent>
+                </>
+              )}
               <br />
               <span className={styles.comment}>/*======== Static Properties ========*/</span>
               <br />
               <Prop p="background-blend-mode" />: soft-light;
-            </div>
+              {mode === "glass" && (
+                <>
+                  <br />
+                  <Prop p="position" />: relative;
+                </>
+              )}
+            </Indent>
             {"}"}
             {mode === "glass" && (
               <>
                 <br />
                 <br />
                 <Selector s=".my-element::before" /> {"{"}
-                <br />
-                <span className={`${styles.property} ${styles.indented}`}>background-color:</span> {backgroundColor}; <br />
+                <Indent>
+                  <Prop p="content" />: "";
+                  <br />
+                  <Prop p="position" />: absolute;
+                  <br />
+                  <Prop p="bottom" />: 0;
+                  <br />
+                  <Prop p="top" />: 0;
+                  <br />
+                  <Prop p="left" />: 0;
+                  <br />
+                  <Prop p="right" />: 0;
+                  <br />
+                  <Prop p="border-radius" />: var(
+                  <Var v="--radius" />
+                  );
+                  <br />
+                  <Prop p="background" />: linear-gradient(calc(var(
+                  <Var v="--angle" />) + 90deg), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, var(
+                  <Var v="--surface-contrast" />
+                  )));
+                </Indent>
                 {"}"}
               </>
             )}

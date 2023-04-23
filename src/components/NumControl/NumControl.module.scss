@@ -1,6 +1,18 @@
+@keyframes lift-in {
+  from {
+    translate: 0px 16px;
+    opacity: 0;
+  }
+  to {
+    translate: 0px 0px;
+    opacity: 1;
+  }
+}
+
 .num-control {
   display: flex;
   height: 26px;
+  position: relative;
   input {
     margin: 0;
     flex-grow: 1;
@@ -19,5 +31,21 @@
     user-select: none;
     flex-shrink: 0;
     text-align: end;
+  }
+}
+
+.tooltip {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  cursor: help;
+  &:hover::after {
+    content: attr(data-tooltip);
+    animation: 0.2s lift-in;
+    position: absolute;
+    background-color: black;
+    padding: 8px;
+    border-radius: 8px;
+    bottom: 30px;
+    left: 0;
   }
 }
