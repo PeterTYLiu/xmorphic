@@ -14,7 +14,7 @@ export default function About({ color }: { color: string }) {
         <a href="https://css.glass" target="_blank">
           css.glass
         </a>
-        , but takes a different approach, optimizing for portability and DX:
+        , but takes a different approach, optimizing for realism and DX:
       </p>
       <p>
         The generated CSS uses a handful of human-readable{" "}
@@ -40,7 +40,7 @@ export default function About({ color }: { color: string }) {
         <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/cos">
           onom
         </a>
-        <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/cos">
+        <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/tan">
           etry
         </a>{" "}
         to render the most realistic styles possible, based on real-world physics.
