@@ -6,7 +6,7 @@ export default function About({ color }: { color: string }) {
     <div className={styles.about} style={{ color }}>
       <h2>About 𝑥morphic</h2>
       <p>
-        𝑥morphic was built from a desire to make something really useful and really freakin' cool using modern CSS. It was inspired by{" "}
+        𝑥morphic was inspired by CSS generators like{" "}
         <a href="https://neumorphism.io" target="_blank">
           neumorphism.io
         </a>{" "}
@@ -14,15 +14,15 @@ export default function About({ color }: { color: string }) {
         <a href="https://css.glass" target="_blank">
           css.glass
         </a>
-        , but takes a radically different approach to generating CSS:
+        , but takes a different approach, optimizing for portability and DX:
       </p>
       <p>
-        Most importantly, the generated CSS uses a handful of human-readable{" "}
+        The generated CSS uses a handful of human-readable{" "}
         <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties" target="_blank">
           CSS variables
         </a>
         . Once the code is generated, it can be modified by anyone, even someone who knows nothing about coding. This is unlike other
-        generators, where you have to go back every time you need to generate a new style.
+        generators, where you have to go back to the generator every time you need a new style.
       </p>
       <p>
         𝑥morphic puts those variables through modern CSS functions like{" "}
@@ -43,7 +43,7 @@ export default function About({ color }: { color: string }) {
         <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/cos">
           etry
         </a>{" "}
-        to render the most realistic styles possible, based on real-world physicals.
+        to render the most realistic styles possible, based on real-world physics.
       </p>
       <p>
         If you like my work, feel free to...
