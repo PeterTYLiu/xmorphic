@@ -218,6 +218,11 @@ $animation-speed: 0.3s;
     border-radius: var(--radius);
     background: linear-gradient(calc(var(--angle) + 90deg), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, var(--surface-contrast)));
   }
+  &:global(.animated) {
+    &::before {
+      transition: all $animation-speed;
+    }
+  }
 }
 
 .glass,
