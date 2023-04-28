@@ -233,8 +233,8 @@ $animation-speed: 0.3s;
   --y-displacement: calc(-1 * var(--sin) * (var(--elevation) + 1px));
 
   background-blend-mode: soft-light;
-  box-shadow: var(--x-displacement) var(--y-displacement) calc(var(--diffusion) * 0.3px + (var(--elevation) * 0.15))
-      calc(var(--elevation) / 2) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
+  box-shadow: var(--x-displacement) var(--y-displacement) calc(var(--diffusion) * 0.3px + (var(--elevation))) calc(var(--elevation) / 2)
+      rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
     0px 0px calc(var(--diffusion) * 1.4px) rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
     inset calc(var(--bevel) * -1) 0 var(--edge-blur) hsla(100, 0%, calc((var(--cos) + 1) * 50%), var(--edge-opacity)),
     inset 0 var(--bevel) var(--edge-blur) hsla(100, 0%, calc((-1 * var(--sin) + 1) * 50%), var(--edge-opacity)),

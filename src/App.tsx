@@ -486,7 +486,8 @@ function App() {
               <Var v="--x-displacement" />) var(
               <Var v="--y-displacement" />) calc(var(
               <Var v="--diffusion" />) * 0.3px + (var(
-              <Var v="--elevation" />) * 0.15)) calc(var(
+              <Var v="--elevation" />
+              ))) calc(var(
               <Var v="--elevation" />) / 2) rgba(0, 0, 0, calc(var(
               <Var v="--intensity" />) * 0.006)),
               <Indent>
