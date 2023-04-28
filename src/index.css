@@ -44,6 +44,7 @@ button {
   color: white;
   border: 1px solid #777;
   transition: all 0.2s;
+  user-select: none;
 }
 
 button:hover {

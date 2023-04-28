@@ -5,13 +5,16 @@ import { LinkBreak2Icon, Link2Icon, HeightIcon, CopyIcon, GitHubLogoIcon, Linked
 import About from "./components/About/About";
 import share from "./utilities/share";
 
-const defaultColor = "#ff8c2e";
-const defaultBackgroundColor = "#38c3b9";
+const defaultColor = "#41b011";
+const defaultBackgroundColor = "#8a6bc0";
 const colorInputTitleModulator = 0.8;
 const minSize = 25;
 const maxSize = 225;
 const maxBevel = 5;
 const maxElevation = 40;
+const defaultIntensity = 70;
+const defaultDiffusion = 30;
+const defaultRadius = 10;
 
 type Mode = "neu" | "glass";
 
@@ -79,14 +82,14 @@ function angleBetween(p1: [number, number], p2: [number, number]) {
 }
 
 function App() {
-  const [radius, setRadius] = useState(8);
+  const [radius, setRadius] = useState(defaultRadius);
   const [size, setSize] = useState(175);
   const [color, setColor] = useState(defaultColor);
   const [backgroundColor, setBackgroundColor] = useState(defaultBackgroundColor);
   const [angle, setAngle] = useState(237);
   const [elevation, setElevation] = useState(20);
-  const [intensity, setIntensity] = useState(50);
-  const [diffusion, setDiffusion] = useState(50);
+  const [intensity, setIntensity] = useState(defaultIntensity);
+  const [diffusion, setDiffusion] = useState(defaultDiffusion);
   const [blurriness, setBlurriness] = useState(2);
   const [bevel, setBevel] = useState(2);
   const [opacity, setOpacity] = useState(50);
@@ -449,24 +452,16 @@ function App() {
               <Var v="--angle" />
               )));
               <br />
-              <Var v="--sin-90" />: calc(sin(var(
+              <Var v="--cos" />: calc(cos(var(
               <Var v="--angle" />
-              ) + 90deg));
+              )));
               <br />
-              <Var v="--sin-180" />: calc(sin(var(
-              <Var v="--angle" />
-              ) + 180deg));
-              <br />
-              <Var v="--sin-270" />: calc(sin(var(
-              <Var v="--angle" />
-              ) + 270deg));
-              <br />
-              <Var v="--x-displacement" />: calc(var(
-              <Var v="--sin-270" />) * (var(
+              <Var v="--x-displacement" />: calc(-1 * var(
+              <Var v="--cos" />) * (var(
               <Var v="--elevation" />) + 1px));
               <br />
-              <Var v="--y-displacement" />: calc(var(
-              <Var v="--sin-180" />) * (var(
+              <Var v="--y-displacement" />: calc(-1 * var(
+              <Var v="--sin" />) * (var(
               <Var v="--elevation" />) + 1px));
               <br />
               <Var v="--edge-opacity" />: calc(var(
@@ -502,21 +497,21 @@ function App() {
                 inset calc(var(
                 <Var v="--bevel" />) * -1) 0 var(
                 <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
-                <Var v="--sin-90" />) + 1) * 50%), var(
+                <Var v="--cos" />) + 1) * 50%), var(
                 <Var v="--edge-opacity" />
                 )),
                 <br />
                 inset 0 var(
                 <Var v="--bevel" />) var(
-                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
-                <Var v="--sin-180" />) + 1) * 50%), var(
+                <Var v="--edge-blur" />) hsla(100, 0%, calc((-1 * var(
+                <Var v="--sin" />) + 1) * 50%), var(
                 <Var v="--edge-opacity" />
                 )),
                 <br />
                 inset var(
                 <Var v="--bevel" />) 0 var(
-                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
-                <Var v="--sin-270" />) + 1) * 50%), var(
+                <Var v="--edge-blur" />) hsla(100, 0%, calc((-1 * var(
+                <Var v="--cos" />) + 1) * 50%), var(
                 <Var v="--edge-opacity" />
                 )),
                 <br />

@@ -228,19 +228,17 @@ $animation-speed: 0.3s;
 .glass,
 .neu {
   --sin: calc(sin(var(--angle)));
-  --sin-90: calc(sin(var(--angle) + 90deg));
-  --sin-180: calc(sin(var(--angle) + 180deg));
-  --sin-270: calc(sin(var(--angle) + 270deg));
-  --x-displacement: calc(var(--sin-270) * (var(--elevation) + 1px));
-  --y-displacement: calc(var(--sin-180) * (var(--elevation) + 1px));
+  --cos: calc(cos(var(--angle)));
+  --x-displacement: calc(-1 * var(--cos) * (var(--elevation) + 1px));
+  --y-displacement: calc(-1 * var(--sin) * (var(--elevation) + 1px));
 
   background-blend-mode: soft-light;
   box-shadow: var(--x-displacement) var(--y-displacement) calc(var(--diffusion) * 0.3px + (var(--elevation) * 0.15))
       calc(var(--elevation) / 2) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
     0px 0px calc(var(--diffusion) * 1.4px) rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
-    inset calc(var(--bevel) * -1) 0 var(--edge-blur) hsla(100, 0%, calc((var(--sin-90) + 1) * 50%), var(--edge-opacity)),
-    inset 0 var(--bevel) var(--edge-blur) hsla(100, 0%, calc((var(--sin-180) + 1) * 50%), var(--edge-opacity)),
-    inset var(--bevel) 0 var(--edge-blur) hsla(100, 0%, calc((var(--sin-270) + 1) * 50%), var(--edge-opacity)),
+    inset calc(var(--bevel) * -1) 0 var(--edge-blur) hsla(100, 0%, calc((var(--cos) + 1) * 50%), var(--edge-opacity)),
+    inset 0 var(--bevel) var(--edge-blur) hsla(100, 0%, calc((-1 * var(--sin) + 1) * 50%), var(--edge-opacity)),
+    inset var(--bevel) 0 var(--edge-blur) hsla(100, 0%, calc((-1 * var(--cos) + 1) * 50%), var(--edge-opacity)),
     inset 0 calc(var(--bevel) * -1) var(--edge-blur) hsla(100, 0%, calc((var(--sin) + 1) * 50%), var(--edge-opacity));
 }
 
