@@ -13,7 +13,6 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --breakpoint: 1150px;
   --animation-speed: 0.3s;
 }
 
