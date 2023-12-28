@@ -74,7 +74,6 @@ export default function About({ color }: { color: string }) {
           <a href="https://sortabase.com" target="_blank">
             Sortabase
           </a>
-          , which I work on full-time
         </li>
       </ul>
       <p>
