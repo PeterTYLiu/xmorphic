@@ -1,4 +1,4 @@
-import styles from "./About.module.scss";
+import styles from "./About.module.css";
 import share from "../../utilities/share";
 
 export default function About({ color }: { color: string }) {
@@ -45,40 +45,38 @@ export default function About({ color }: { color: string }) {
         </a>{" "}
         to render the most realistic styles possible, based on real-world physics.
       </p>
-      <p>
-        If you like my work, feel free to...
-        <ul>
-          <li>
-            view the source code on{" "}
-            <a href="https://github.com/PeterTYLiu/xmorphic" target="_blank">
-              Github
-            </a>
-            , though please mind the mess!
-          </li>
-          <li>
-            DM me on{" "}
-            <a href="https://www.linkedin.com/in/peter-ty-liu" target="_blank">
-              LinkedIn
-            </a>
-          </li>
-          <li>
-            <a onClick={share}>share this site</a>
-          </li>
-          <li>
-            {" "}
-            <a href="https://www.buymeacoffee.com/PeterLiu" target="_blank">
-              buy me a coffee
-            </a>
-          </li>
-          <li>
-            check out{" "}
-            <a href="https://sortabase.com" target="_blank">
-              Sortabase
-            </a>
-            , which I work on full-time
-          </li>
-        </ul>
-      </p>
+      <p>If you like my work, feel free to...</p>
+      <ul>
+        <li>
+          view the source code on{" "}
+          <a href="https://github.com/PeterTYLiu/xmorphic" target="_blank">
+            Github
+          </a>
+          , though please mind the mess!
+        </li>
+        <li>
+          DM me on{" "}
+          <a href="https://www.linkedin.com/in/peter-ty-liu" target="_blank">
+            LinkedIn
+          </a>
+        </li>
+        <li>
+          <a onClick={share}>share this site</a>
+        </li>
+        <li>
+          {" "}
+          <a href="https://www.buymeacoffee.com/PeterLiu" target="_blank">
+            buy me a coffee
+          </a>
+        </li>
+        <li>
+          check out{" "}
+          <a href="https://sortabase.com" target="_blank">
+            Sortabase
+          </a>
+          , which I work on full-time
+        </li>
+      </ul>
       <p>
         (If there is enough demand, I will make a setting to generate hard-coded CSS without variables, which does have some performance
         benefits.)

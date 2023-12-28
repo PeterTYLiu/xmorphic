@@ -1,5 +1,5 @@
 import type { Dispatch } from "react";
-import styles from "./NumControl.module.scss";
+import styles from "./NumControl.module.css";
 
 interface NumControlProps {
   value: number;

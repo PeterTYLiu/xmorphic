@@ -1,15 +1,10 @@
 $breakpoint: 1150px;
-$animation-speed: 0.3s;
-
-:global(.animated) {
-  transition: all $animation-speed;
-}
 
 .app {
   padding: 24px;
   min-height: 100vh;
   min-height: 100dvh;
-  transition: background-color $animation-speed;
+  transition: background-color var(--animation-speed);
   --surface-contrast: calc(var(--intensity) * 0.01 - var(--diffusion) * 0.005);
   --edge-opacity: calc(var(--intensity) * 0.006 - var(--diffusion) * 0.002);
   --edge-blur: calc(var(--bevel) * 1.5);
@@ -44,14 +39,14 @@ $animation-speed: 0.3s;
   right: 16px;
 }
 
-.code {
+.pre {
   max-height: 600px;
   position: relative;
   display: flex;
   @media screen and (max-width: $breakpoint) {
     max-height: 300px;
   }
-  .pre {
+  .code {
     overflow: auto;
     .selector {
       color: rgb(237, 40, 255);
@@ -74,8 +69,9 @@ $animation-speed: 0.3s;
   }
 }
 
-.code,
+.pre,
 .controls {
+  margin: 0;
   background-color: #000000aa;
   padding: 16px 20px;
   border-radius: 20px;
@@ -220,7 +216,7 @@ $animation-speed: 0.3s;
   }
   &:global(.animated) {
     &::before {
-      transition: all $animation-speed;
+      transition: all var(--animation-speed);
     }
   }
 }
