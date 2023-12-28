@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef, type CSSProperties, ReactNode } from "react";
+import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import styles from "./App.module.scss";
 import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon, CopyIcon, GitHubLogoIcon, LinkedInLogoIcon, Share1Icon } from "@radix-ui/react-icons";
 import About from "./components/About/About";
 import share from "./utilities/share";
+import hljs from "highlight.js/lib/core";
+import css from "highlight.js/lib/languages/css";
 
 const defaultColor = "#41b011";
 const defaultBackgroundColor = "#8a6bc0";
@@ -51,32 +53,6 @@ function randBetween(min: number, max: number) {
   return Math.round(Math.random() * (max - min)) + min;
 }
 
-function copyCode() {
-  const code = document.getElementById("code")?.innerText;
-  if (!code) return;
-  console.log(code);
-  navigator.clipboard
-    .writeText(code)
-    .then(() => alert("Copied to clipboard!"))
-    .catch(() => alert("Failed to copy :("));
-}
-
-function Var({ v }: { v: string }) {
-  return <span className={styles.variable}>{v}</span>;
-}
-
-function Prop({ p }: { p: string }) {
-  return <span className={styles.property}>{p}</span>;
-}
-
-function Selector({ s }: { s: string }) {
-  return <span className={styles.selector}>{s}</span>;
-}
-
-function Indent({ children }: { children: ReactNode }) {
-  return <div className={styles.indented}>{children}</div>;
-}
-
 function angleBetween(p1: [number, number], p2: [number, number]) {
   return (Math.atan2(p1[1] - p2[1], p1[0] - p2[0]) * 180) / Math.PI;
 }
@@ -100,6 +76,7 @@ function App() {
   const lightRef = useRef<HTMLDivElement | null>(null);
   const targetRef = useRef<HTMLDivElement | null>(null);
   const phantomBulbRef = useRef<HTMLDivElement | null>(null);
+  const codeRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isLinked && color !== backgroundColor) setBackgroundColor(color);
@@ -153,6 +130,20 @@ function App() {
     logoRef.current.style.setProperty("--angle", logoAngle);
   }, [angle, phantomBulbRef, logoRef]);
 
+  // Highlight the generated CSS
+  useEffect(() => {
+    hljs.registerLanguage("css", css);
+    hljs.configure({ languages: ["css"] });
+  }, []);
+
+  useEffect(() => {
+    if (codeRef.current) {
+      codeRef.current.removeAttribute("data-highlighted");
+      codeRef.current.classList.remove("hljs", "langauge-css");
+      hljs.highlightElement(codeRef.current);
+    }
+  }, [radius, color, backgroundColor, angle, elevation, intensity, diffusion, blurriness, bevel, opacity, mode, codeRef]);
+
   // =============================================================
   // ========================== Utilities ========================
   // =============================================================
@@ -184,6 +175,15 @@ function App() {
   const textColorForBackground = hexIsLight(backgroundColor)
     ? adjustHexColor(backgroundColor, -colorInputTitleModulator)
     : adjustHexColor(backgroundColor, colorInputTitleModulator);
+
+  function copyCode() {
+    const code = codeRef.current?.innerText;
+    if (!code) return;
+    navigator.clipboard
+      .writeText(code)
+      .then(() => alert("Copied to clipboard!"))
+      .catch(() => alert("Failed to copy :("));
+  }
 
   // =============================================================
   // ========================== The Page =========================
@@ -405,209 +405,89 @@ function App() {
           />
         </div>
 
-        <code className={styles.code} id="code">
+        <pre className={styles.pre}>
           <button className={styles.copy} onClick={copyCode} title="Copy to clipboard">
             <CopyIcon />
           </button>
-          <pre className={styles.pre}>
-            <Selector s=".parent" /> {"{"}
-            <Indent>
-              <Prop p="background-color" />: {backgroundColor};
-            </Indent>
-            {"}"}
-            <br />
-            <br />
-            <Selector s=".my-element" /> {"{"}
-            <Indent>
-              <span className={styles.comment}>/*===== Configurable Variables =====*/</span>
-              <br />
-              <span className={styles.comment}>/*======= Only these change! =======*/</span>
-              <br />
-              <Var v="--color" />: {color};
-              <br />
-              <Var v="--radius" />: {radius}%;
-              <br />
-              <Var v="--elevation" />: {elevation}px;
-              <br />
-              <Var v="--bevel" />: {bevel}px;
-              <br />
-              {mode === "glass" && (
-                <>
-                  <Var v="--opacity" />: {opacity}%;
-                  <br />
-                  <Var v="--blurriness" />: {blurriness}px;
-                  <br />
-                </>
-              )}
-              <Var v="--angle" />: {angle}deg;
-              <br />
-              <Var v="--intensity" />: {intensity};
-              <br />
-              <Var v="--diffusion" />: {diffusion};
-              <br />
-              <br />
-              <span className={styles.comment}>/*======= Computed Variables =======*/</span>
-              <br />
-              <Var v="--sin" />: calc(sin(var(
-              <Var v="--angle" />
-              )));
-              <br />
-              <Var v="--cos" />: calc(cos(var(
-              <Var v="--angle" />
-              )));
-              <br />
-              <Var v="--x-displacement" />: calc(-1 * var(
-              <Var v="--cos" />) * (var(
-              <Var v="--elevation" />) + 1px));
-              <br />
-              <Var v="--y-displacement" />: calc(-1 * var(
-              <Var v="--sin" />) * (var(
-              <Var v="--elevation" />) + 1px));
-              <br />
-              <Var v="--edge-opacity" />: calc(var(
-              <Var v="--intensity" />) * 0.006 - var(
-              <Var v="--diffusion" />) * 0.002);
-              <br />
-              <Var v="--edge-blur" />: calc(var(
-              <Var v="--bevel" />) * 1.5);
-              <br />
-              <Var v="--surface-contrast" />: calc(var(
-              <Var v="--intensity" />) * 0.01 - var(
-              <Var v="--diffusion" />) * 0.005);
-              <br />
-              <br />
-              <span className={styles.comment}>/*======= Computed Properties =======*/</span>
-              <br />
-              <Prop p="border-radius" />: var(
-              <Var v="--radius" />
-              );
-              <br />
-              <Prop p="box-shadow" />: var(
-              <Var v="--x-displacement" />) var(
-              <Var v="--y-displacement" />) calc(var(
-              <Var v="--diffusion" />) * 0.3px + (var(
-              <Var v="--elevation" />
-              ))) calc(var(
-              <Var v="--elevation" />) / 2) rgba(0, 0, 0, calc(var(
-              <Var v="--intensity" />) * 0.006)),
-              <Indent>
-                0px 0px calc(var(
-                <Var v="--diffusion" />) * 1.4px) rgba(255, 255, 255, calc(var(
-                <Var v="--intensity" />) * 0.004)),
-                <br />
-                inset calc(var(
-                <Var v="--bevel" />) * -1) 0 var(
-                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
-                <Var v="--cos" />) + 1) * 50%), var(
-                <Var v="--edge-opacity" />
-                )),
-                <br />
-                inset 0 var(
-                <Var v="--bevel" />) var(
-                <Var v="--edge-blur" />) hsla(100, 0%, calc((-1 * var(
-                <Var v="--sin" />) + 1) * 50%), var(
-                <Var v="--edge-opacity" />
-                )),
-                <br />
-                inset var(
-                <Var v="--bevel" />) 0 var(
-                <Var v="--edge-blur" />) hsla(100, 0%, calc((-1 * var(
-                <Var v="--cos" />) + 1) * 50%), var(
-                <Var v="--edge-opacity" />
-                )),
-                <br />
-                inset 0 calc(var(
-                <Var v="--bevel" />) * -1) var(
-                <Var v="--edge-blur" />) hsla(100, 0%, calc((var(
-                <Var v="--sin" />) + 1) * 50%), var(
-                <Var v="--edge-opacity" />
-                ));
-              </Indent>
-              {mode === "glass" && (
-                <>
-                  <Prop p="backdrop-filter" />: blur(var(
-                  <Var v="--blurriness" />
-                  ));
-                  <br />
-                  <Prop p="background-color" />: color-mix(in srgb, var(
-                  <Var v="--color" />) var(
-                  <Var v="--opacity" />
-                  ), transparent calc(100% - var(
-                  <Var v="--opacity" />
-                  )));
-                  <br />
-                </>
-              )}
-              {mode !== "glass" && (
-                <>
-                  <Prop p="background" />: linear-gradient(
-                  <Indent>
-                    calc(var(
-                    <Var v="--angle" />) + 90deg),
-                    <br />
-                    rgba(0, 0, 0, var(
-                    <Var v="--surface-contrast" />
-                    )),
-                    <br />
-                    rgba(255, 255, 255, var(
-                    <Var v="--surface-contrast" />
-                    ))
-                    <br />
-                    ),
-                    <br />
-                    var(
-                    <Var v="--color" />
-                    );
-                  </Indent>
-                </>
-              )}
-              <br />
-              <span className={styles.comment}>/*======== Static Properties ========*/</span>
-              <br />
-              <Prop p="background-blend-mode" />: soft-light;
-              {mode === "glass" && (
-                <>
-                  <br />
-                  <Prop p="position" />: relative;
-                </>
-              )}
-            </Indent>
-            {"}"}
-            {mode === "glass" && (
-              <>
-                <br />
-                <br />
-                <Selector s=".my-element::before" /> {"{"}
-                <Indent>
-                  <Prop p="content" />: "";
-                  <br />
-                  <Prop p="position" />: absolute;
-                  <br />
-                  <Prop p="bottom" />: 0;
-                  <br />
-                  <Prop p="top" />: 0;
-                  <br />
-                  <Prop p="left" />: 0;
-                  <br />
-                  <Prop p="right" />: 0;
-                  <br />
-                  <Prop p="border-radius" />: var(
-                  <Var v="--radius" />
-                  );
-                  <br />
-                  <Prop p="background" />: linear-gradient(calc(var(
-                  <Var v="--angle" />) + 90deg), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, var(
-                  <Var v="--surface-contrast" />
-                  )));
-                </Indent>
-                {"}"}
-              </>
-            )}
-            <br />
-            <br />
-            <span className={styles.comment}>/*== Made using xmorphic.dev by Peter Liu ==*/</span>
-          </pre>
-        </code>
+          <code className={styles.code} ref={codeRef}>
+            {`.parent {
+  background-color: ${backgroundColor};
+}
+
+.my-element {
+  /*===== Configurable Variables =====*/
+  /*======= Only these change! =======*/
+  --color: ${color};
+  --radius: ${radius}%;
+  --elevation: ${elevation}px;
+  --bevel: ${bevel}px;${
+              mode === "glass"
+                ? `
+  --opacity: ${opacity}%;
+  --blurriness: ${blurriness}px;`
+                : ``
+            }
+  --angle: ${angle}deg;
+  --intensity: ${intensity};
+  --diffusion: ${diffusion};
+
+  /*======= Computed Variables =======*/
+  --sin: calc(sin(var(--angle)));
+  --cos: calc(cos(var(--angle)));
+  --x-displacement: calc(-1 * var(--cos) * (var(--elevation) + 1px));
+  --y-displacement: calc(-1 * var(--sin) * (var(--elevation) + 1px));
+  --edge-opacity: calc(var(--intensity) * 0.006 - var(--diffusion) * 0.002);
+  --edge-blur: calc(var(--bevel) * 1.5);
+  --surface-contrast: calc(var(--intensity) * 0.01 - var(--diffusion) * 0.005);
+
+  /*======= Computed Properties =======*/
+  border-radius: var(--radius);
+  box-shadow: var(--x-displacement) var(--y-displacement) calc(var(--diffusion) * 0.3px + (var(--elevation))) calc(var(--elevation) / 2) rgba(0, 0, 0, calc(var(--intensity) * 0.006)),
+    0px 0px calc(var(--diffusion) * 1.4px) rgba(255, 255, 255, calc(var(--intensity) * 0.004)),
+    inset calc(var(--bevel) * -1) 0 var(--edge-blur) hsla(100, 0%, calc((var(--cos) + 1) * 50%), var(--edge-opacity)),
+    inset 0 var(--bevel) var(--edge-blur) hsla(100, 0%, calc((-1 * var(--sin) + 1) * 50%), var(--edge-opacity)),
+    inset var(--bevel) 0 var(--edge-blur) hsla(100, 0%, calc((-1 * var(--cos) + 1) * 50%), var(--edge-opacity)),
+    inset 0 calc(var(--bevel) * -1) var(--edge-blur) hsla(100, 0%, calc((var(--sin) + 1) * 50%), var(--edge-opacity));
+  ${
+    mode === "glass"
+      ? `background-color: color-mix(in srgb, var(--color) var(--opacity), transparent calc(100% - var(--opacity)));
+  backdrop-filter: blur(var(--blurriness));
+      `
+      : `background: linear-gradient(
+    calc(var(--angle) + 90deg),
+    rgba(0, 0, 0, var(--surface-contrast)),
+    rgba(255, 255, 255, var(--surface-contrast))
+    ),
+    var(--color);`
+  }
+  /*======== Static Properties ========*/
+  background-blend-mode: soft-light;${
+    mode === "glass"
+      ? `
+  position: relative;`
+      : ""
+  }${
+              mode === "glass"
+                ? `
+
+  /*====== Nested Pseudo-Element ======*/
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-radius: var(--radius);
+    background: linear-gradient(calc(var(--angle) + 90deg), hsla(0, 0%, 100%, 0) 40%, hsla(0, 0%, 100%, var(--surface-contrast)));
+  }`
+                : ""
+            }
+}
+
+/*==== Made using xmorphic.dev ====*/`}
+          </code>
+        </pre>
       </main>
       <About color={textColorForBackground} />
     </div>
