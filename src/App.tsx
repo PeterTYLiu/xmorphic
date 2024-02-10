@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
-import styles from "./App.module.scss";
+import styles from "./App.module.css";
 import NumControl from "./components/NumControl/NumControl";
 import { LinkBreak2Icon, Link2Icon, HeightIcon, CopyIcon, GitHubLogoIcon, LinkedInLogoIcon, Share1Icon } from "@radix-ui/react-icons";
 import About from "./components/About/About";

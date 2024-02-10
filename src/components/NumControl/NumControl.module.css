@@ -21,7 +21,7 @@
     user-select: none;
     width: 70px;
     flex-shrink: 0;
-    margin-right: 4px;
+    margin-inline-end: 4px;
     abbr {
       cursor: help;
     }
@@ -47,6 +47,6 @@
     z-index: 20;
     border-radius: 8px;
     bottom: 30px;
-    left: 0;
+    inset-inline-start: 0;
   }
 }

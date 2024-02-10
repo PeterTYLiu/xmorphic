@@ -28,10 +28,9 @@ a {
   color: inherit;
   font-weight: bold;
   text-decoration: underline;
-}
-
-a:hover {
-  opacity: 0.6;
+  &:hover {
+    opacity: 0.6;
+  }
 }
 
 button {
@@ -47,10 +46,9 @@ button {
   border: 1px solid #777;
   transition: all 0.2s;
   user-select: none;
-}
-
-button:hover {
-  background-color: #666;
+  &:hover {
+    background-color: #666;
+  }
 }
 
 h1,
