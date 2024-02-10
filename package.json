@@ -16,11 +16,11 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10",
-    "vite-plugin-pwa": "^0.17.4"
+    "vite": "^5.1.1",
+    "vite-plugin-pwa": "^0.17.5"
   }
 }
